@@ -1,4 +1,4 @@
-from sql_alchemy import database
+from sql_alch import database
 
 
 class HotelModel(database.Model):
@@ -26,3 +26,25 @@ class HotelModel(database.Model):
             "diary": self.diary,
             "city": self.city
         }
+
+    @classmethod
+    def find_hotel(cls, hotel_id):
+        # SELETEC * FROM hotels WHERE hotel_id = $hotel_id LIMIT 1
+        hotel = cls.query.filter_by(hotel_id=hotel_id).first()
+        if hotel:
+            return hotel
+        return None
+
+    def save_hotel(self):
+        database.session.add(self)
+        database.session.commit()
+
+    def update_hotel(self, name, stars, diary, city):
+        self.name = name
+        self.stars = stars
+        self.diary = diary
+        self.city = city
+
+    def delete_hotel(self):
+        database.session.delete(self)
+        database.session.commit()

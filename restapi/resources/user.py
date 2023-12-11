@@ -1,23 +1,23 @@
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 
+attributes = reqparse.RequestParser()
+attributes.add_argument(
+    'login',
+    type=str,
+    required=True,
+    help="The field Login cannot be left blank"
+)
+attributes.add_argument(
+    'password',
+    type=str,
+    required=True,
+    help="The field Password cannot be left blank"
+)
+
 
 class User(Resource):
     # /users/{user_id}
-    attributes = reqparse.RequestParser()
-    attributes.add_argument(
-        'login',
-        type=str,
-        required=True,
-        help="The field Login cannot be left blank"
-    )
-    attributes.add_argument(
-        'password',
-        type=str,
-        required=True,
-        help="The field Password cannot be left blank"
-    )
-
     def get(self, user_id):
         user = UserModel.find_user(user_id)
         if user:
@@ -40,19 +40,6 @@ class User(Resource):
 class UserRegister(Resource):
     # /register
     def post(self):
-        attributes = reqparse.RequestParser()
-        attributes.add_argument(
-            'login',
-            type=str,
-            required=True,
-            help="The field Login cannot be left blank"
-        )
-        attributes.add_argument(
-            'password',
-            type=str,
-            required=True,
-            help="The field Password cannot be left blank"
-        )
         data = attributes.parse_args()
 
         if UserModel.find_by_login(data['login']):
@@ -63,3 +50,15 @@ class UserRegister(Resource):
         user = UserModel(**data)
         user.save_user()
         return {"message": "User created successfully"}, 201
+
+
+# class UserLogin(Resource):
+
+#     @classmethod
+#     def post(cls):
+#         data = attributes.parse_args()
+
+#         user = UserModel.find_by_login(data['login'])
+
+#         if user and safe_str_cmp(user.password, data['password']):
+#             access_token = create_access_token(identity=user.user_id)

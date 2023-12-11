@@ -27,6 +27,14 @@ class UserModel(database.Model):
             return user
         return None
 
+    @classmethod
+    def find_by_login(cls, login):
+        # SELETEC * FROM hotels WHERE hotel_id = $hotel_id LIMIT 1
+        user_login = cls.query.filter_by(login=login).first()
+        if user_login:
+            return user_login
+        return None
+
     def save_user(self):
         database.session.add(self)
         database.session.commit()

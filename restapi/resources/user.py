@@ -3,27 +3,26 @@ from models.user import UserModel
 
 
 class User(Resource):
-    arguments = reqparse.RequestParser()
-    arguments.add_argument(
-        'name',
+    # /users/{user_id}
+    attributes = reqparse.RequestParser()
+    attributes.add_argument(
+        'login',
         type=str,
         required=True,
-        help="This field 'name' cannot be left blank."
+        help="The field Login cannot be left blank"
     )
-    arguments.add_argument(
-        'stars',
-        type=float,
+    attributes.add_argument(
+        'password',
+        type=str,
         required=True,
-        help="This field 'stars' cannot be left blank."
+        help="The field Password cannot be left blank"
     )
-    arguments.add_argument('diary')
-    arguments.add_argument('city')
 
     def get(self, user_id):
         user = UserModel.find_user(user_id)
         if user:
             return user.json()
-        return {'message': 'Hotel not found.'}, 404
+        return {'message': 'User not found.'}, 404
 
     def delete(self, user_id):
         hotel = UserModel.find_user(user_id)
@@ -32,7 +31,35 @@ class User(Resource):
                 hotel.delete_user()
             except Exception:
                 return {
-                    "message": "An error ocurred trying to delete hotel."
+                    "message": "An error ocurred trying to delete user."
                 }, 500
-            return {'message': 'Hotel deleted'}, 200
-        return {"message": "Hotel not found"}, 404
+            return {'message': 'User deleted'}, 200
+        return {"message": "User not found"}, 404
+
+
+class UserRegister(Resource):
+    # /register
+    def post(self):
+        attributes = reqparse.RequestParser()
+        attributes.add_argument(
+            'login',
+            type=str,
+            required=True,
+            help="The field Login cannot be left blank"
+        )
+        attributes.add_argument(
+            'password',
+            type=str,
+            required=True,
+            help="The field Password cannot be left blank"
+        )
+        data = attributes.parse_args()
+
+        if UserModel.find_by_login(data['login']):
+            return {
+                "message": f"The login '{data['login']}' already exists."
+            }
+
+        user = UserModel(**data)
+        user.save_user()
+        return {"message": "User created successfully"}, 201

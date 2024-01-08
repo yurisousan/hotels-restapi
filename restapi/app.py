@@ -8,6 +8,7 @@ from resources.user import User, UserRegister, UserLogin
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = 'DontTellAnyone'
 api = Api(app)
 jwt = JWTManager(app)
 

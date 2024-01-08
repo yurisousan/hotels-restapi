@@ -1,7 +1,10 @@
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 from flask_jwt_extended import create_access_token
-from werkzeug.security import safe_str_cmp
+import hmac
+
+str_to_bytes = lambda s: s.encode("utf-8") if isinstance(s, str) else s
+safe_str_cmp = lambda a, b: hmac.compare_digest(str_to_bytes(a), str_to_bytes(b))
 
 attributes = reqparse.RequestParser()
 attributes.add_argument(
@@ -65,5 +68,5 @@ class UserLogin(Resource):
         if user and safe_str_cmp(user.password, data['password']):
             access_token = create_access_token(identity=user.user_id)
             return {'access_token': access_token}, 200
-        return {'messa': 'The username or password is incorrect.'}, 401
+        return {'message': 'The username or password is incorrect.'}, 401
     

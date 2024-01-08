@@ -1,5 +1,7 @@
 from flask_restful import Resource, reqparse
 from models.user import UserModel
+from flask_jwt_extended import create_access_token
+from werkzeug.security import safe_str_cmp
 
 attributes = reqparse.RequestParser()
 attributes.add_argument(
@@ -52,13 +54,16 @@ class UserRegister(Resource):
         return {"message": "User created successfully"}, 201
 
 
-# class UserLogin(Resource):
+class UserLogin(Resource):
 
-#     @classmethod
-#     def post(cls):
-#         data = attributes.parse_args()
+    @classmethod
+    def post(cls):
+        data = attributes.parse_args()
 
-#         user = UserModel.find_by_login(data['login'])
+        user = UserModel.find_by_login(data['login'])
 
-#         if user and safe_str_cmp(user.password, data['password']):
-#             access_token = create_access_token(identity=user.user_id)
+        if user and safe_str_cmp(user.password, data['password']):
+            access_token = create_access_token(identity=user.user_id)
+            return {'access_token': access_token}, 200
+        return {'messa': 'The username or password is incorrect.'}, 401
+    

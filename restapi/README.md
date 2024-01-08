@@ -4,9 +4,9 @@
 
 ### Create a venv
 ```bash
-python -m venv virtual
+python -m venv venv
 
-source virtual/bin/activate
+source venv/bin/activate
 ```
 
 ### Run the code

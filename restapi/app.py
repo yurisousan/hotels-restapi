@@ -19,13 +19,16 @@ jwt = JWTManager(app)
 def create_database():
     database.create_all()
 
+
 @jwt.token_in_blocklist_loader
 def verify_blocklist(self, token):
     return token['jti'] in BLACKLIST
 
+
 @jwt.revoked_token_loader
 def invalidated_access_token(jwt_header, jwt_payload):
     return jsonify({'message': 'You have been logged out.'}), 401
+
 
 api.add_resource(Hotels, '/hotels')
 api.add_resource(Hotel, '/hotels/<string:hotel_id>')

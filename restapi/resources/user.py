@@ -73,7 +73,6 @@ class UserLogin(Resource):
         return {'message': 'The username or password is incorrect.'}, 401
 
 
-
 class UserLogout(Resource):
 
     @jwt_required()
@@ -81,4 +80,3 @@ class UserLogout(Resource):
         jwt_id = get_jwt()['jti']
         BLACKLIST.add(jwt_id)
         return {'message': 'Logged out successfully'}, 200
-    
